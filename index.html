@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Schedule Kelas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            padding-top: 0;
+            transition: padding-top 0.5s ease;
+        }
+        .hidden { display: none; }
+        .modal-backdrop {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            transform: scale(0.9); opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .modal-backdrop.flex { display: flex; }
+        .modal-backdrop.flex .modal-content { transform: scale(1); opacity: 1; }
+        .toast {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            transition: bottom 0.5s ease-in-out; z-index: 1100;
+        }
+        .toast.show { bottom: 20px; }
+        #notification-banner {
+            transition: transform 0.5s ease-in-out;
+        }
+        .tab-btn.active {
+            border-color: #3b82f6; /* blue-500 */
+            color: #3b82f6;
+            background-color: #eff6ff; /* blue-50 */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div id="notification-banner" class="hidden fixed top-0 left-0 right-0 bg-green-500 text-white p-4 text-center z-[2000] shadow-lg transform -translate-y-full">
+        <span id="notification-message" class="font-semibold"></span>
+        <button id="close-notification-btn" class="absolute top-1/2 right-4 -translate-y-1/2 font-bold text-2xl leading-none">&times;</button>
+    </div>
+
+    <div id="login-page" class="flex items-center justify-center min-h-screen">
+        <div class="w-full max-w-sm p-8 space-y-6 bg-white rounded-2xl shadow-lg">
+            <div>
+                <h1 class="text-3xl font-bold text-center text-slate-900">E-Schedule Login</h1>
+                <p class="text-center text-slate-500 mt-2">Silakan masuk untuk melanjutkan.</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="username" class="text-sm font-medium text-slate-600">Username</label>
+                    <input id="username" name="username" type="text" required class="w-full px-3 py-2 mt-1 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="admin / siswa">
+                </div>
+                <div>
+                    <label for="password" class="text-sm font-medium text-slate-600">Password</label>
+                    <input id="password" name="password" type="password" required class="w-full px-3 py-2 mt-1 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="••••••••">
+                </div>
+                 <p id="login-error" class="text-sm text-red-500 hidden">Username atau password salah!</p>
+                <button type="submit" class="w-full py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Login</button>
+            </form>
+            <div class="text-xs text-slate-400 text-center pt-4">
+                <p><b>Akun Admin:</b> admin / admin123</p>
+                <p><b>Akun Siswa:</b> siswa / smanida</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden">
+        <div class="container mx-auto max-w-5xl p-4 sm:p-6">
+            <header class="text-center mb-6">
+                 <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                    <div id="welcome-message" class="text-left text-sm text-slate-500"></div>
+                    <div id="clock" class="text-sm font-semibold text-slate-700 bg-white px-3 py-1 rounded-lg shadow-sm"></div>
+                    <button id="logout-btn" class="text-sm font-medium bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300">Logout</button>
+                </div>
+                <h1 class="text-4xl font-bold text-slate-900">E-Schedule Kelas</h1>
+                <p class="text-slate-500 mt-2">Jadwal pelajaran dan manajemen tugas dalam satu aplikasi.</p>
+            </header>
+
+            <div class="mb-6 flex justify-center border-b border-slate-200">
+                 <button id="tab-schedule" class="tab-btn active text-slate-600 py-3 px-6 font-semibold border-b-2 border-transparent transition hover:bg-slate-200">Jadwal Kelas</button>
+                 <button id="tab-tasks" class="tab-btn text-slate-600 py-3 px-6 font-semibold border-b-2 border-transparent transition hover:bg-slate-200">Tugas Pelajaran</button>
+            </div>
+
+            <div id="admin-controls" class="flex justify-center gap-4 mb-8 hidden">
+                <button id="add-schedule-btn" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                    Tambah Jadwal
+                </button>
+                 <button id="add-task-btn" class="bg-amber-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-amber-600 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-500 hidden items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM5 12V7a1 1 0 011-1h9a1 1 0 110 2H7v5a1 1 0 01-2 0zm-2 4h10a1 1 0 110 2H3a1 1 0 010-2z" /></svg>
+                    Tambah Tugas
+                </button>
+            </div>
+
+            <main id="schedule-container" class="space-y-8"></main>
+            <main id="tasks-container" class="hidden"></main>
+        </div>
+    </div>
+
+    <div id="schedule-modal" class="modal-backdrop">
+        <div class="modal-content bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl m-4">
+            <h2 id="schedule-modal-title" class="text-2xl font-bold mb-6 text-slate-900"></h2>
+            <form id="schedule-form">
+                 <input type="hidden" id="schedule-id">
+                <div class="space-y-4">
+                    <div><label for="day" class="block text-sm font-medium text-slate-600 mb-1">Hari</label><select id="day" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option></select></div>
+                    <div><label for="subject" class="block text-sm font-medium text-slate-600 mb-1">Mata Pelajaran</label><input type="text" id="subject" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500" p="Contoh: Matematika"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label for="start-time" class="block text-sm font-medium text-slate-600 mb-1">Mulai</label><input type="time" id="start-time" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>
+                        <div><label for="end-time" class="block text-sm font-medium text-slate-600 mb-1">Selesai</label><input type="time" id="end-time" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>
+                    </div>
+                    <div><label for="teacher" class="block text-sm font-medium text-slate-600 mb-1">Guru</label><input type="text" id="teacher" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Bpk. Andi"></div>
+                    <div><label for="room" class="block text-sm font-medium text-slate-600 mb-1">Ruangan</label><input type="text" id="room" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Lab Komputer"></div>
+                </div>
+                <div class="flex justify-end gap-3 mt-8">
+                    <button type="button" id="cancel-schedule-btn" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="task-modal" class="modal-backdrop">
+        <div class="modal-content bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl m-4">
+            <h2 id="task-modal-title" class="text-2xl font-bold mb-6 text-slate-900"></h2>
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <div class="space-y-4">
+                    <div><label for="task-subject" class="block text-sm font-medium text-slate-600 mb-1">Mata Pelajaran</label><input type="text" id="task-subject" required class="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="Contoh: Fisika"></div>
+                    <div><label for="task-title" class="block text-sm font-medium text-slate-600 mb-1">Judul Tugas</label><input type="text" id="task-title" required class="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="Contoh: Laporan Praktikum"></div>
+                    <div><label for="task-due-date" class="block text-sm font-medium text-slate-600 mb-1">Tenggat</label><input type="date" id="task-due-date" required class="w-full px-3 py-2 border border-slate-300 rounded-lg"></div>
+                    <div><label for="task-description" class="block text-sm font-medium text-slate-600 mb-1">Deskripsi</label><textarea id="task-description" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="Detail tugas..."></textarea></div>
+                </div>
+                <div class="flex justify-end gap-3 mt-8">
+                    <button type="button" id="cancel-task-btn" class="px-4 py-2 bg-slate-200 rounded-lg hover:bg-slate-300">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast bg-slate-900 text-white py-2 px-5 rounded-full shadow-lg">
+        <p id="toast-message"></p>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements ---
+    const loginPage = document.getElementById('login-page'), mainApp = document.getElementById('main-app');
+    const loginForm = document.getElementById('login-form'), loginError = document.getElementById('login-error');
+    const logoutBtn = document.getElementById('logout-btn'), welcomeMessage = document.getElementById('welcome-message');
+    const adminControls = document.getElementById('admin-controls'), addScheduleBtn = document.getElementById('add-schedule-btn'), addTaskBtn = document.getElementById('add-task-btn');
+    const scheduleModal = document.getElementById('schedule-modal'), scheduleModalTitle = document.getElementById('schedule-modal-title'), scheduleForm = document.getElementById('schedule-form'), cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
+    const taskModal = document.getElementById('task-modal'), taskModalTitle = document.getElementById('task-modal-title'), taskForm = document.getElementById('task-form'), cancelTaskBtn = document.getElementById('cancel-task-btn');
+    const tabSchedule = document.getElementById('tab-schedule'), tabTasks = document.getElementById('tab-tasks');
+    const scheduleContainer = document.getElementById('schedule-container'), tasksContainer = document.getElementById('tasks-container');
+    const toast = document.getElementById('toast'), toastMessage = document.getElementById('toast-message');
+    const clockDisplay = document.getElementById('clock'), notificationBanner = document.getElementById('notification-banner'), notificationMessage = document.getElementById('notification-message'), closeNotificationBtn = document.getElementById('close-notification-btn');
+
+    // --- Constants & State ---
+    const SCHEDULE_STORAGE_KEY = 'classSchedules', TASKS_STORAGE_KEY = 'classTasks', SESSION_KEY = 'loggedInUser';
+    const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const dummyUsers = { admin: { password: 'admin123', role: 'admin' }, siswa: { password: 'smanida', role: 'user' } };
+    let currentUser = null, notifiedBreaks = JSON.parse(sessionStorage.getItem('notifiedBreaksToday')) || [], clockInterval, breakCheckInterval;
+
+    // --- Helper Functions ---
+    const getSchedules = () => JSON.parse(localStorage.getItem(SCHEDULE_STORAGE_KEY)) || [];
+    const saveSchedules = (s) => localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(s));
+    const getTasks = () => JSON.parse(localStorage.getItem(TASKS_STORAGE_KEY)) || [];
+    const saveTasks = (t) => localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(t));
+    const getSession = () => JSON.parse(sessionStorage.getItem(SESSION_KEY));
+    const setSession = (u) => sessionStorage.setItem(SESSION_KEY, JSON.stringify(u));
+    const clearSession = () => sessionStorage.removeItem(SESSION_KEY);
+    const showToast = (msg) => { toastMessage.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); };
+
+    // --- Data Population ---
+    const populateInitialSchedules = () => { saveSchedules([
+        { id: "101", type: "class", day: "Senin", s: "Upacara Bendera", st: "07:00", et: "07:45", t: "Semua Guru", r: "Lapangan" },{ id: "102", type: "class", day: "Senin", s: "Matematika", st: "07:45", et: "09:15", t: "Bpk. Budi Darmawan", r: "Ruang 101" },{ id: "b1s", type: "break", day: "Senin", s: "Istirahat", st: "09:15", et: "09:45" },{ id: "103", type: "class", day: "Senin", s: "Bahasa Indonesia", st: "09:45", et: "11:15", t: "Ibu Siti Aminah", r: "Ruang 101" },{ id: "b2s", type: "break", day: "Senin", s: "Istirahat Siang", st: "11:15", et: "12:15" },{ id: "104", type: "class", day: "Senin", s: "Fisika", st: "12:15", et: "13:45", t: "Bpk. Agung Prasetyo", r: "Lab Fisika" },
+        { id: "201", type: "class", day: "Selasa", s: "Bahasa Inggris", st: "07:00", et: "08:30", t: "Ibu Grace Kelly", r: "Ruang 102" },{ id: "202", type: "class", day: "Selasa", s: "Kimia", st: "08:30", et: "10:00", t: "Ibu Retno Wulandari", r: "Lab Kimia" },{ id: "b1t", type: "break", day: "Selasa", s: "Istirahat", st: "10:00", et: "10:30" },{ id: "203", type: "class", day: "Selasa", s: "Sejarah Indonesia", st: "10:30", et: "12:00", t: "Bpk. Tirtayasa", r: "Ruang 102" },{ id: "b2t", type: "break", day: "Selasa", s: "Istirahat Siang", st: "12:00", et: "13:00" },{ id: "204", type: "class", day: "Selasa", s: "Seni Budaya", st: "13:00", et: "14:30", t: "Ibu Endah Laras", r: "Ruang Seni" },
+        { id: "301", type: "class", day: "Rabu", s: "Biologi", st: "07:00", et: "08:30", t: "Ibu Diah Pitaloka", r: "Lab Biologi" },{ id: "302", type: "class", day: "Rabu", s: "Matematika", st: "08:30", et: "10:00", t: "Bpk. Budi Darmawan", r: "Ruang 101" },{ id: "b1w", type: "break", day: "Rabu", s: "Istirahat", st: "10:00", et: "10:30" },{ id: "303", type: "class", day: "Rabu", s: "Geografi", st: "10:30", et: "12:00", t: "Bpk. Rahmat", r: "Ruang 103" },{ id: "b2w", type: "break", day: "Rabu", s: "Istirahat Siang", st: "12:00", et: "13:00" },{ id: "304", type: "class", day: "Rabu", s: "PJOK", st: "13:00", et: "14:30", t: "Bpk. Doni", r: "Lapangan" },
+        { id: "401", type: "class", day: "Kamis", s: "Bahasa Indonesia", st: "07:00", et: "08:30", t: "Ibu Siti Aminah", r: "Ruang 101" },{ id: "402", type: "class", day: "Kamis", s: "Fisika", st: "08:30", et: "10:00", t: "Bpk. Agung Prasetyo", r: "Lab Fisika" },{ id: "b1t", type: "break", day: "Kamis", s: "Istirahat", st: "10:00", et: "10:30" },{ id: "403", type: "class", day: "Kamis", s: "Ekonomi", st: "10:30", et: "12:00", t: "Ibu Sri Mulyani", r: "Ruang 103" },{ id: "b2t", type: "break", day: "Kamis", s: "Istirahat Siang", st: "12:00", et: "13:00" },{ id: "404", type: "class", day: "Kamis", s: "PPKn", st: "13:00", et: "14:30", t: "Bpk. Gatot S.", r: "Ruang 101" },
+        { id: "501", type: "class", day: "Jumat", s: "Kegiatan Rohani", st: "07:00", et: "08:00", t: "Guru Agama", r: "Aula" },{ id: "502", type: "class", day: "Jumat", s: "Bahasa Inggris", st: "08:00", et: "09:30", t: "Ibu Grace Kelly", r: "Ruang 102" },{ id: "b1f", type: "break", day: "Jumat", s: "Istirahat", st: "09:30", et: "10:00" },{ id: "503", type: "class", day: "Jumat", s: "Sosiologi", st: "10:00", et: "11:30", t: "Bpk. Joko Susilo", r: "Ruang 103" },{ id: "b2f", type: "break", day: "Jumat", s: "Sholat Jumat", st: "11:30", et: "13:00" },{ id: "504", type: "class", day: "Jumat", s: "TIK", st: "13:00", et: "14:30", t: "Bpk. Hendi", r: "Lab Komputer" },
+    ]);};
+    const populateInitialTasks = () => { saveTasks([
+        { id: "t1", s: "Fisika", title: "Laporan Praktikum", dueDate: "2025-10-03", desc: "Tulis laporan lengkap praktikum gerak lurus." }, { id: "t2", s: "B. Indonesia", title: "Analisis Puisi", dueDate: "2025-10-06", desc: "Analisis unsur intrinsik puisi Chairil Anwar." }, { id: "t3", s: "Matematika", title: "Latihan Soal", dueDate: "2025-09-30", desc: "Kerjakan LKS halaman 50-52." },
+    ]);};
+
+    // --- Clock & Notification ---
+    const updateClock = () => { const n=new Date(); clockDisplay.innerHTML = `${n.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'})} | <strong>${n.toLocaleTimeString('id-ID')}</strong>`; };
+    const showNotification = (msg) => { notificationMessage.textContent=msg; notificationBanner.classList.remove('hidden'); setTimeout(() => { notificationBanner.classList.remove('-translate-y-full'); document.body.style.paddingTop = `${notificationBanner.offsetHeight}px`; }, 10); };
+    const hideNotification = () => { notificationBanner.classList.add('-translate-y-full'); document.body.style.paddingTop = '0'; };
+    const checkBreaks = () => { const n=new Date(), d=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][n.getDay()], t=n.toTimeString().slice(0,5); const b = getSchedules().find(s=>s.day===d && s.st===t && s.type==='break' && !notifiedBreaks.includes(s.id)); if (b) { showNotification(`🔔 Waktunya ${b.s}! (${b.st} - ${b.et})`); notifiedBreaks.push(b.id); sessionStorage.setItem('notifiedBreaksToday',JSON.stringify(notifiedBreaks)); } };
+
+    // --- Render Functions ---
+    const createScheduleCard = (sc, r) => {
+        if (sc.type === 'break') return `<div class="bg-emerald-100 text-emerald-800 p-5 rounded-xl shadow-sm border-emerald-200 flex items-center justify-center text-center"><h3 class="text-xl font-bold">${sc.s}</h3><p class="font-semibold text-lg ml-2">${sc.st} - ${sc.et}</p></div>`;
+        const btns = r==='admin' ? `<div class="flex justify-end gap-3 mt-4"><button data-id="${sc.id}" class="edit-schedule-btn text-blue-500 hover:text-blue-700 text-sm font-medium">Edit</button><button data-id="${sc.id}" class="delete-schedule-btn text-red-500 hover:text-red-700 text-sm font-medium">Hapus</button></div>` : '';
+        return `<div class="bg-white p-5 rounded-xl shadow-sm border"><h3 class="text-xl font-bold">${sc.s}</h3><p class="text-blue-600 font-semibold">${sc.st} - ${sc.et}</p><p class="text-slate-500 mt-1">${sc.t}</p>${btns}</div>`;
+    };
+    const renderSchedules = () => { scheduleContainer.innerHTML = ''; const sch = getSchedules(); const byDay = daysOrder.reduce((acc,day)=>{const f=sch.filter(s=>s.day===day).sort((a,b)=>a.st.localeCompare(b.st)); if(f.length>0)acc[day]=f; return acc;},{}); for(const day of daysOrder){if(byDay[day]){const sec=document.createElement('section'); sec.innerHTML=`<h2 class="text-2xl font-bold mb-4">${day}</h2><div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">${byDay[day].map(s=>createScheduleCard(s,currentUser.role)).join('')}</div>`; scheduleContainer.appendChild(sec);}} };
+    const createTaskCard = (t, r) => {
+        const btns = r==='admin' ? `<div class="flex justify-end gap-3 mt-4 pt-3 border-t"><button data-id="${t.id}" class="edit-task-btn text-blue-500 text-sm font-medium">Edit</button><button data-id="${t.id}" class="delete-task-btn text-red-500 text-sm font-medium">Hapus</button></div>` : '';
+        return `<div class="bg-white p-5 rounded-xl shadow-sm border flex flex-col justify-between"><span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-1 rounded-full self-start">${t.s}</span><h3 class="text-xl font-bold mt-2">${t.title}</h3><p class="text-slate-500 mt-1 text-sm">${t.desc||''}</p><div><p class="text-sm font-semibold text-red-600 mt-4 pt-3 border-t">Tenggat: ${new Date(t.dueDate+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'})}</p>${btns}</div></div>`;
+    };
+    const renderTasks = () => { tasksContainer.innerHTML = ''; const tasks = getTasks().sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate)); if (tasks.length === 0) { tasksContainer.innerHTML = `<div class="text-center p-10"><p>Tidak ada tugas.</p></div>`; return; } tasksContainer.innerHTML = `<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">${tasks.map(t => createTaskCard(t, currentUser.role)).join('')}</div>`; };
+    
+    // --- Modal Logic ---
+    const showScheduleModal = (s=null) => { scheduleForm.reset(); scheduleModalTitle.textContent = s ? 'Edit Jadwal' : 'Tambah Jadwal'; document.getElementById('schedule-id').value=s?s.id:''; if(s){document.getElementById('day').value=s.day;document.getElementById('subject').value=s.s;document.getElementById('start-time').value=s.st;document.getElementById('end-time').value=s.et;document.getElementById('teacher').value=s.t;document.getElementById('room').value=s.r;} scheduleModal.classList.add('flex'); };
+    const hideScheduleModal = () => scheduleModal.classList.remove('flex');
+    const showTaskModal = (t=null) => { taskForm.reset(); taskModalTitle.textContent = t ? 'Edit Tugas' : 'Tambah Tugas'; document.getElementById('task-id').value=t?t.id:''; if(t){document.getElementById('task-subject').value=t.s;document.getElementById('task-title').value=t.title;document.getElementById('task-due-date').value=t.dueDate;document.getElementById('task-description').value=t.desc;} taskModal.classList.add('flex'); };
+    const hideTaskModal = () => taskModal.classList.remove('flex');
+
+    // --- Application Flow ---
+    const showLoginPage = () => { loginPage.classList.remove('hidden'); mainApp.classList.add('hidden'); };
+    const showMainApp = () => { loginPage.classList.add('hidden'); mainApp.classList.remove('hidden'); welcomeMessage.textContent = `Selamat datang, ${currentUser.username}!`; adminControls.classList.toggle('hidden', currentUser.role!=='admin'); renderSchedules(); renderTasks(); tabSchedule.click(); clockInterval=setInterval(updateClock,1000); breakCheckInterval=setInterval(checkBreaks,30000); updateClock(); checkBreaks(); };
+    const handleLogout = () => { currentUser=null; clearSession(); showLoginPage(); clearInterval(clockInterval); clearInterval(breakCheckInterval); };
+
+    // --- Event Handlers ---
+    loginForm.addEventListener('submit', (e) => { e.preventDefault(); loginError.classList.add('hidden'); const u=e.target.username.value, p=e.target.password.value, user=dummyUsers[u]; if(user&&user.password===p){currentUser={username:u,role:user.role};setSession(currentUser);showMainApp();}else{loginError.classList.remove('hidden');}});
+    logoutBtn.addEventListener('click', handleLogout);
+    tabSchedule.addEventListener('click', () => { tabSchedule.classList.add('active'); tabTasks.classList.remove('active'); scheduleContainer.classList.remove('hidden'); tasksContainer.classList.add('hidden'); addScheduleBtn.classList.remove('hidden'); addTaskBtn.classList.add('hidden'); });
+    tabTasks.addEventListener('click', () => { tabTasks.classList.add('active'); tabSchedule.classList.remove('active'); tasksContainer.classList.remove('hidden'); scheduleContainer.classList.add('hidden'); addTaskBtn.classList.remove('hidden'); addScheduleBtn.classList.add('hidden'); });
+    addScheduleBtn.addEventListener('click', () => showScheduleModal());
+    addTaskBtn.addEventListener('click', () => showTaskModal());
+    cancelScheduleBtn.addEventListener('click', hideScheduleModal);
+    cancelTaskBtn.addEventListener('click', hideTaskModal);
+    scheduleModal.addEventListener('click', (e) => e.target === scheduleModal && hideScheduleModal());
+    taskModal.addEventListener('click', (e) => e.target === taskModal && hideTaskModal());
+    closeNotificationBtn.addEventListener('click', hideNotification);
+    scheduleForm.addEventListener('submit', (e) => { e.preventDefault(); const id=document.getElementById('schedule-id').value; const d={id:id||''+Date.now(), type:"class", day:document.getElementById('day').value,s:document.getElementById('subject').value,st:document.getElementById('start-time').value,et:document.getElementById('end-time').value,t:document.getElementById('teacher').value,r:document.getElementById('room').value}; let s=getSchedules(); if(id){const i=s.findIndex(x=>x.id===id); if(i!==-1)s[i]=d; showToast('Jadwal diperbarui!');}else{s.push(d);showToast('Jadwal ditambahkan!');} saveSchedules(s); renderSchedules(); hideScheduleModal(); });
+    taskForm.addEventListener('submit', (e) => { e.preventDefault(); const id=document.getElementById('task-id').value; const d={id:id||''+Date.now(), s:document.getElementById('task-subject').value,title:document.getElementById('task-title').value,dueDate:document.getElementById('task-due-date').value,desc:document.getElementById('task-description').value}; let t=getTasks(); if(id){const i=t.findIndex(x=>x.id===id); if(i!==-1)t[i]=d; showToast('Tugas diperbarui!');}else{t.push(d);showToast('Tugas ditambahkan!');} saveTasks(t); renderTasks(); hideTaskModal(); });
+    scheduleContainer.addEventListener('click', (e) => { const t=e.target; if(t.closest('.delete-schedule-btn')){saveSchedules(getSchedules().filter(s=>s.id!==t.dataset.id)); renderSchedules(); showToast('Jadwal dihapus.');} if(t.closest('.edit-schedule-btn')){const s=getSchedules().find(s=>s.id===t.dataset.id); if(s)showScheduleModal(s);} });
+    tasksContainer.addEventListener('click', (e) => { const t=e.target; if(t.closest('.delete-task-btn')){saveTasks(getTasks().filter(x=>x.id!==t.dataset.id)); renderTasks(); showToast('Tugas dihapus.');} if(t.closest('.edit-task-btn')){const x=getTasks().find(x=>x.id===t.dataset.id); if(x)showTaskModal(x);} });
+
+    // --- Initial Check ---
+    const init = () => { if(!localStorage.getItem(SCHEDULE_STORAGE_KEY)) populateInitialSchedules(); if(!localStorage.getItem(TASKS_STORAGE_KEY)) populateInitialTasks(); currentUser = getSession(); if(currentUser) showMainApp(); else showLoginPage(); };
+    init();
+});
+</script>
+
+</body>
+</html>
