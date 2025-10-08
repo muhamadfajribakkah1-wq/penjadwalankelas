@@ -67,7 +67,7 @@
     </div>
 
     <div id="login-page" class="flex items-center justify-center min-h-screen p-4">
-        <div class="w-full max-w-sm p-8 space-y-6 rounded-2xl shadow-lg glass-card">
+        <div class="w-full max-w-sm p-8 space-y-6 rounded-2xl shadow-lg glass-card relative">
             <!-- Step 1: Class Selection -->
             <div id="class-selection-step">
                 <div>
@@ -100,7 +100,7 @@
                 <form id="login-form" class="space-y-4 pt-6">
                     <div>
                         <label for="username" class="text-sm font-medium text-slate-300">Username</label>
-                        <input id="username" name="username" type="text" required class="w-full px-3 py-2 mt-1 rounded-lg focus:ring-2 transition input-dark" placeholder="admin / siswa">
+                        <input id="username" name="username" type="text" required class="w-full px-3 py-2 mt-1 rounded-lg focus:ring-2 transition input-dark" placeholder="Username Anda">
                     </div>
                     <div>
                         <label for="password" class="text-sm font-medium text-slate-300">Password</label>
@@ -109,9 +109,9 @@
                     <p id="login-error" class="text-sm text-red-400 hidden">Username atau password salah!</p>
                     <button type="submit" class="w-full py-3 font-semibold text-white bg-sky-600 rounded-lg hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 focus:ring-offset-slate-900 transition">Login</button>
                 </form>
-            </div>
-            <div class="text-xs text-slate-500 text-center pt-4">
-                <p><b>Admin:</b> admin / admin123 | <b>Siswa:</b> siswa / smanida</p>
+                <p class="text-xs text-center text-slate-400 pt-4">
+                    Belum punya akun? <a href="#" class="font-medium text-sky-400 hover:underline">Daftar disini</a>
+                </p>
             </div>
         </div>
     </div>
@@ -132,32 +132,32 @@
                  <button id="tab-schedule" class="tab-btn active text-slate-300 py-3 px-6 font-semibold border-b-2 border-transparent transition hover:bg-slate-800/50">Jadwal Kelas</button>
                  <button id="tab-tasks" class="tab-btn text-slate-300 py-3 px-6 font-semibold border-b-2 border-transparent transition hover:bg-slate-800/50">Tugas Pelajaran</button>
                  <button id="tab-piket" class="tab-btn text-slate-300 py-3 px-6 font-semibold border-b-2 border-transparent transition hover:bg-slate-800/50">Jadwal Piket</button>
+                 <button id="tab-users" class="tab-btn text-slate-300 py-3 px-6 font-semibold border-b-2 border-transparent transition hover:bg-slate-800/50 hidden">Kelola User</button>
             </div>
 
             <div id="admin-controls" class="flex justify-center gap-4 mb-8 hidden">
                 <button id="add-schedule-btn" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
                     Tambah Jadwal
                 </button>
                  <button id="add-task-btn" class="bg-amber-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-amber-600 transition-transform transform hover:scale-105 hidden items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" /></svg>
                     Tambah Tugas
                 </button>
                 <button id="edit-piket-btn" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105 hidden items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm-1.5 5.5a3 3 0 00-3 0V12a2 2 0 00-2 2v1a2 2 0 002 2h3.5a2 2 0 002-2v-1a2 2 0 00-2-2v-.5zM16 6a3 3 0 11-6 0 3 3 0 016 0zm-1.5 5.5a3 3 0 00-3 0V12a2 2 0 00-2 2v1a2 2 0 002 2H16a2 2 0 002-2v-1a2 2 0 00-2-2v-.5z" />
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm-1.5 5.5a3 3 0 00-3 0V12a2 2 0 00-2 2v1a2 2 0 002 2h3.5a2 2 0 002-2v-1a2 2 0 00-2-2v-.5zM16 6a3 3 0 11-6 0 3 3 0 016 0zm-1.5 5.5a3 3 0 00-3 0V12a2 2 0 00-2 2v1a2 2 0 002 2H16a2 2 0 002-2v-1a2 2 0 00-2-2v-.5z" /></svg>
                     Ubah Piket
+                </button>
+                <button id="add-user-btn" class="bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-purple-700 transition-transform transform hover:scale-105 hidden items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                    Tambah User
                 </button>
             </div>
 
             <main id="schedule-container" class="space-y-8"></main>
             <main id="tasks-container" class="hidden"></main>
             <main id="piket-container" class="hidden"></main>
+            <main id="users-container" class="hidden"></main>
         </div>
     </div>
 
@@ -166,6 +166,24 @@
     <div id="task-modal" class="modal-backdrop"> <div class="modal-content w-full max-w-md p-6 rounded-2xl shadow-2xl m-4 glass-card"> <h2 id="task-modal-title" class="text-2xl font-bold mb-6 text-slate-100"></h2> <form id="task-form"> <input type="hidden" id="task-id"> <div class="space-y-4 text-slate-300"> <div><label for="task-subject" class="block text-sm font-medium mb-1">Mata Pelajaran</label><input type="text" id="task-subject" required class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark" placeholder="Contoh: Fisika"></div> <div><label for="task-title" class="block text-sm font-medium mb-1">Judul Tugas</label><input type="text" id="task-title" required class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark" placeholder="Contoh: Laporan Praktikum"></div> <div><label for="task-due-date" class="block text-sm font-medium mb-1">Tenggat Waktu</label><input type="date" id="task-due-date" required class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark"></div> <div><label for="task-description" class="block text-sm font-medium mb-1">Deskripsi</label><textarea id="task-description" rows="3" class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark" placeholder="Detail tugas..."></textarea></div> </div> <div class="flex justify-end gap-3 mt-8"> <button type="button" id="cancel-task-btn" class="px-4 py-2 bg-slate-600 rounded-lg hover:bg-slate-500">Batal</button> <button type="submit" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">Simpan</button> </div> </form> </div> </div>
     <div id="piket-modal" class="modal-backdrop"> <div class="modal-content w-full max-w-md p-6 rounded-2xl shadow-2xl m-4 glass-card"> <h2 id="piket-modal-title" class="text-2xl font-bold mb-6 text-slate-100">Ubah Jadwal Piket</h2> <form id="piket-form"> <input type="hidden" id="piket-day"> <div class="space-y-4 text-slate-300"> <div><label for="piket-day-display" class="block text-sm font-medium mb-1">Hari</label><input type="text" id="piket-day-display" readonly class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg"></div> <div><label for="piket-students" class="block text-sm font-medium mb-1">Nama Siswa (pisahkan dengan koma)</label><textarea id="piket-students" rows="5" required class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark" placeholder="Contoh: Budi, Ani, Candra, Dewi"></textarea></div> </div> <div class="flex justify-end gap-3 mt-8"> <button type="button" id="cancel-piket-btn" class="px-4 py-2 bg-slate-600 rounded-lg hover:bg-slate-500">Batal</button> <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Simpan</button> </div> </form> </div> </div>
     
+    <div id="user-modal" class="modal-backdrop">
+        <div class="modal-content w-full max-w-md p-6 rounded-2xl shadow-2xl m-4 glass-card">
+            <h2 id="user-modal-title" class="text-2xl font-bold mb-6 text-slate-100"></h2>
+            <form id="user-form">
+                <input type="hidden" id="user-id">
+                <div class="space-y-4 text-slate-300">
+                    <div><label for="user-username" class="block text-sm font-medium mb-1">Username</label><input type="text" id="user-username" required class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark"></div>
+                    <div><label for="user-password" class="block text-sm font-medium mb-1">Password</label><input type="password" id="user-password" required class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark"></div>
+                    <div><label for="user-role" class="block text-sm font-medium mb-1">Peran</label><select id="user-role" required class="w-full px-3 py-2 rounded-lg focus:ring-2 transition input-dark"><option value="siswa">Siswa</option><option value="admin">Admin</option></select></div>
+                </div>
+                <div class="flex justify-end gap-3 mt-8">
+                    <button type="button" id="cancel-user-btn" class="px-4 py-2 bg-slate-600 rounded-lg hover:bg-slate-500">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="toast" class="toast bg-slate-100 text-slate-900 py-2 px-5 rounded-full shadow-lg">
         <p id="toast-message" class="font-semibold"></p>
     </div>
@@ -185,22 +203,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainApp = document.getElementById('main-app');
     const loginForm = document.getElementById('login-form'), loginError = document.getElementById('login-error');
     const logoutBtn = document.getElementById('logout-btn'), welcomeMessage = document.getElementById('welcome-message');
-    const adminControls = document.getElementById('admin-controls'), addScheduleBtn = document.getElementById('add-schedule-btn'), addTaskBtn = document.getElementById('add-task-btn'), editPiketBtn = document.getElementById('edit-piket-btn');
+    const adminControls = document.getElementById('admin-controls'), addScheduleBtn = document.getElementById('add-schedule-btn'), addTaskBtn = document.getElementById('add-task-btn'), editPiketBtn = document.getElementById('edit-piket-btn'), addUserBtn = document.getElementById('add-user-btn');
     const scheduleModal = document.getElementById('schedule-modal'), scheduleModalTitle = document.getElementById('schedule-modal-title'), scheduleForm = document.getElementById('schedule-form'), cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
     const taskModal = document.getElementById('task-modal'), taskModalTitle = document.getElementById('task-modal-title'), taskForm = document.getElementById('task-form'), cancelTaskBtn = document.getElementById('cancel-task-btn');
     const piketModal = document.getElementById('piket-modal'), piketForm = document.getElementById('piket-form'), cancelPiketBtn = document.getElementById('cancel-piket-btn');
-    const tabSchedule = document.getElementById('tab-schedule'), tabTasks = document.getElementById('tab-tasks'), tabPiket = document.getElementById('tab-piket');
-    const scheduleContainer = document.getElementById('schedule-container'), tasksContainer = document.getElementById('tasks-container'), piketContainer = document.getElementById('piket-container');
+    const userModal = document.getElementById('user-modal'), userModalTitle = document.getElementById('user-modal-title'), userForm = document.getElementById('user-form'), cancelUserBtn = document.getElementById('cancel-user-btn');
+    const tabSchedule = document.getElementById('tab-schedule'), tabTasks = document.getElementById('tab-tasks'), tabPiket = document.getElementById('tab-piket'), tabUsers = document.getElementById('tab-users');
+    const scheduleContainer = document.getElementById('schedule-container'), tasksContainer = document.getElementById('tasks-container'), piketContainer = document.getElementById('piket-container'), usersContainer = document.getElementById('users-container');
     const toast = document.getElementById('toast'), toastMessage = document.getElementById('toast-message');
     const clockDisplay = document.getElementById('clock'), notificationBanner = document.getElementById('notification-banner'), notificationMessage = document.getElementById('notification-message'), closeNotificationBtn = document.getElementById('close-notification-btn');
 
     // --- Constants & State ---
-    const SCHEDULE_KEY_PREFIX = 'classSchedules', TASKS_KEY_PREFIX = 'classTasks', PIKET_KEY_PREFIX = 'classPiket', SESSION_KEY = 'loggedInUser';
+    const USERS_STORAGE_KEY = 'appUsers', SCHEDULE_KEY_PREFIX = 'classSchedules', TASKS_KEY_PREFIX = 'classTasks', PIKET_KEY_PREFIX = 'classPiket', SESSION_KEY = 'loggedInUser';
     const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const dummyUsers = { admin: { password: 'admin123', role: 'admin' }, siswa: { password: 'smanida', role: 'user' } };
     let currentUser = null, notifiedBreaks = JSON.parse(sessionStorage.getItem('notifiedBreaksToday')) || [], clockInterval, breakCheckInterval;
 
     // --- Helper Functions ---
+    const getUsers = () => JSON.parse(localStorage.getItem(USERS_STORAGE_KEY)) || [];
+    const saveUsers = (u) => localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(u));
     const getStorageKey = (prefix) => { if (!currentUser || !currentUser.selectedClass) return null; return `${prefix}_${currentUser.selectedClass}`; }
     const getSchedules = () => JSON.parse(localStorage.getItem(getStorageKey(SCHEDULE_KEY_PREFIX))) || [];
     const saveSchedules = (s) => localStorage.setItem(getStorageKey(SCHEDULE_KEY_PREFIX), JSON.stringify(s));
@@ -214,6 +234,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const showToast = (msg) => { toastMessage.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); };
     
     // --- Data Population ---
+    const populateInitialUsers = () => {
+        if (getUsers().length === 0) {
+            saveUsers([
+                { id: 'admin', password: 'admin123', role: 'admin' },
+                { id: 'siswa', password: 'smanida', role: 'siswa' }
+            ]);
+        }
+    };
     const populateInitialDataForClass = () => {
         if (!localStorage.getItem(getStorageKey(SCHEDULE_KEY_PREFIX))) {
             const initialSchedules = [ 
@@ -303,6 +331,35 @@ document.addEventListener('DOMContentLoaded', () => {
         piketContainer.innerHTML = `<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">${piketData.map(p => createPiketCard(p, currentUser.role)).join('')}</div>`;
     };
     
+    const createUserCard = (user) => {
+        const roleBadge = user.role === 'admin' 
+            ? `<span class="bg-red-500/20 text-red-300 text-xs font-semibold px-2 py-1 rounded-full">Admin</span>`
+            : `<span class="bg-sky-500/20 text-sky-300 text-xs font-semibold px-2 py-1 rounded-full">Siswa</span>`;
+        
+        const deleteBtnDisabled = user.id === currentUser.id ? 'disabled opacity-50 cursor-not-allowed' : '';
+        
+        return `
+            <div class="p-5 rounded-xl glass-card flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-100">${user.id}</h3>
+                    ${roleBadge}
+                </div>
+                <div class="flex gap-3">
+                    <button data-id="${user.id}" class="edit-user-btn text-sky-400 hover:text-sky-300 text-sm font-medium">Ubah</button>
+                    <button data-id="${user.id}" class="delete-user-btn text-red-400 hover:text-red-300 text-sm font-medium" ${deleteBtnDisabled}>Hapus</button>
+                </div>
+            </div>
+        `;
+    };
+    const renderUsers = () => {
+        usersContainer.innerHTML = '';
+        const users = getUsers();
+        const grid = document.createElement('div');
+        grid.className = 'grid gap-4 md:grid-cols-2';
+        grid.innerHTML = users.map(createUserCard).join('');
+        usersContainer.appendChild(grid);
+    };
+
     // --- Modal Logic ---
     const showScheduleModal = (s = null) => { scheduleForm.reset(); scheduleModalTitle.textContent = s ? 'Ubah Jadwal' : 'Tambah Jadwal'; document.getElementById('schedule-id').value = s ? s.id : ''; if (s) { document.getElementById('day').value = s.day; document.getElementById('subject').value = s.subject; document.getElementById('start-time').value = s.startTime; document.getElementById('end-time').value = s.endTime; document.getElementById('teacher').value = s.teacher; document.getElementById('room').value = s.room; } scheduleModal.classList.add('flex'); };
     const hideScheduleModal = () => scheduleModal.classList.remove('flex');
@@ -310,6 +367,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const hideTaskModal = () => taskModal.classList.remove('flex');
     const showPiketModal = (p) => { piketForm.reset(); document.getElementById('piket-day').value = p.day; document.getElementById('piket-day-display').value = p.day; document.getElementById('piket-students').value = p.students.join(', '); piketModal.classList.add('flex'); };
     const hidePiketModal = () => piketModal.classList.remove('flex');
+    const showUserModal = (user = null) => {
+        userForm.reset();
+        userModalTitle.textContent = user ? 'Ubah Pengguna' : 'Tambah Pengguna Baru';
+        document.getElementById('user-id').value = user ? user.id : '';
+        const usernameField = document.getElementById('user-username');
+        if (user) {
+            usernameField.value = user.id;
+            usernameField.readOnly = true;
+            usernameField.classList.add('bg-slate-700/50');
+            document.getElementById('user-password').value = user.password;
+            document.getElementById('user-role').value = user.role;
+        } else {
+            usernameField.readOnly = false;
+            usernameField.classList.remove('bg-slate-700/50');
+        }
+        userModal.classList.add('flex');
+    };
+    const hideUserModal = () => userModal.classList.remove('flex');
 
     // --- Application Flow ---
     const showLoginPage = () => {
@@ -325,9 +400,11 @@ document.addEventListener('DOMContentLoaded', () => {
         welcomeMessage.textContent = `Selamat datang, ${currentUser.username}!`;
         classDisplay.textContent = `Menampilkan Jadwal untuk Kelas ${currentUser.selectedClass}`;
         adminControls.classList.toggle('hidden', currentUser.role !== 'admin');
+        tabUsers.classList.toggle('hidden', currentUser.role !== 'admin');
         renderSchedules();
         renderTasks();
         renderPiket();
+        if (currentUser.role === 'admin') renderUsers();
         tabSchedule.click();
         clockInterval = setInterval(updateClock, 1000);
         breakCheckInterval = setInterval(checkBreaks, 30000);
@@ -360,7 +437,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedClass = classSelect.value;
         const username = e.target.username.value;
         const password = e.target.password.value;
-        const user = dummyUsers[username];
+        const users = getUsers();
+        const user = users.find(u => u.id === username);
 
         if (user && user.password === password) {
             currentUser = { username, role: user.role, selectedClass };
@@ -373,17 +451,19 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.addEventListener('click', handleLogout);
     
     const switchTab = (activeTab) => {
-        [tabSchedule, tabTasks, tabPiket].forEach(t => t.classList.remove('active'));
-        [scheduleContainer, tasksContainer, piketContainer].forEach(c => c.classList.add('hidden'));
-        [addScheduleBtn, addTaskBtn, editPiketBtn].forEach(b => b.classList.add('hidden'));
+        [tabSchedule, tabTasks, tabPiket, tabUsers].forEach(t => t.classList.remove('active'));
+        [scheduleContainer, tasksContainer, piketContainer, usersContainer].forEach(c => c.classList.add('hidden'));
+        [addScheduleBtn, addTaskBtn, editPiketBtn, addUserBtn].forEach(b => b.classList.add('hidden'));
         activeTab.classList.add('active');
         if (activeTab === tabSchedule) { scheduleContainer.classList.remove('hidden'); addScheduleBtn.classList.remove('hidden'); }
         if (activeTab === tabTasks) { tasksContainer.classList.remove('hidden'); addTaskBtn.classList.remove('hidden'); }
         if (activeTab === tabPiket) { piketContainer.classList.remove('hidden'); editPiketBtn.classList.remove('hidden'); }
+        if (activeTab === tabUsers) { usersContainer.classList.remove('hidden'); addUserBtn.classList.remove('hidden'); }
     };
     tabSchedule.addEventListener('click', () => switchTab(tabSchedule));
     tabTasks.addEventListener('click', () => switchTab(tabTasks));
     tabPiket.addEventListener('click', () => switchTab(tabPiket));
+    tabUsers.addEventListener('click', () => switchTab(tabUsers));
     
     addScheduleBtn.addEventListener('click', () => showScheduleModal());
     addTaskBtn.addEventListener('click', () => showTaskModal());
@@ -405,8 +485,57 @@ document.addEventListener('DOMContentLoaded', () => {
     tasksContainer.addEventListener('click', (e) => { const btn = e.target.closest('button'); if (!btn) return; const id = btn.dataset.id; if (btn.classList.contains('delete-task-btn')) { saveTasks(getTasks().filter(t => t.id !== id)); renderTasks(); showToast('Tugas dihapus.'); } if (btn.classList.contains('edit-task-btn')) { const t = getTasks().find(t => t.id === id); if (t) showTaskModal(t); } });
     piketContainer.addEventListener('click', (e) => { const btn = e.target.closest('.edit-piket-card-btn'); if (btn) { const day = btn.dataset.day; const p = getPiket().find(x => x.day === day); if (p) showPiketModal(p); } });
 
+    addUserBtn.addEventListener('click', () => showUserModal());
+    cancelUserBtn.addEventListener('click', hideUserModal);
+    userModal.addEventListener('click', (e) => e.target === userModal && hideUserModal());
+
+    userForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('user-username').value;
+        const originalId = document.getElementById('user-id').value;
+        const data = {
+            id,
+            password: document.getElementById('user-password').value,
+            role: document.getElementById('user-role').value
+        };
+        let users = getUsers();
+        if (originalId) { // Editing
+            const index = users.findIndex(u => u.id === originalId);
+            if (index !== -1) users[index] = data;
+            showToast('Pengguna berhasil diperbarui!');
+        } else { // Adding
+            if (users.some(u => u.id === id)) {
+                showToast('Username sudah ada!');
+                return;
+            }
+            users.push(data);
+            showToast('Pengguna baru ditambahkan!');
+        }
+        saveUsers(users);
+        renderUsers();
+        hideUserModal();
+    });
+    
+    usersContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        if (btn.classList.contains('delete-user-btn')) {
+            if (confirm(`Yakin ingin menghapus pengguna "${id}"?`)) {
+                saveUsers(getUsers().filter(u => u.id !== id));
+                renderUsers();
+                showToast('Pengguna dihapus.');
+            }
+        }
+        if (btn.classList.contains('edit-user-btn')) {
+            const user = getUsers().find(u => u.id === id);
+            if (user) showUserModal(user);
+        }
+    });
+
     // --- Initial Check ---
     const init = () => {
+        populateInitialUsers();
         const classes = "ABCDEFGHIJKL".split('').map(char => `XII-${char}`);
         classes.forEach(c => {
             const option = document.createElement('option');
